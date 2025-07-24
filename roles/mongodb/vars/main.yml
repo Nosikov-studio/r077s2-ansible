@@ -1,0 +1,8 @@
+---
+root_password: password
+admin_user: admin
+admin_password: 2
+db_name: expo
+password_validation_policy: 1
+
+

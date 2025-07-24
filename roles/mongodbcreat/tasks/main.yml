@@ -1,0 +1,57 @@
+
+# tasks file for mysqldump
+#------------------------------------------------s7
+---
+
+    # - name: Создать базу данных и коллекцию в MongoDB
+    #   shell: >
+    #     mongo --eval "use {{ db_name }}; db.createCollection({{ collection_name }});"
+    #   args:
+    #     warn: false
+  
+    # - name: Импортировать данные в MongoDB с помощью mongoimport
+    #   shell: >
+    #     mongoimport --db {{ db_name }} --collection {{ collection_name }}
+    #     --file bdjsondump.txt --jsonArray --drop
+    #   args:
+    #     warn: false
+
+    # - name: Создать базу expom и коллекцию colltab
+    #   community.mongodb.mongodb_shell:
+    #     login_host: localhost
+    #     login_port: 27017
+    #     eval: |
+    #       db = db.getSiblingDB('expom');
+    #       if (db.getCollectionNames().indexOf('colltab') === -1) {
+    #         db.createCollection('colltab');
+    #       }    
+# - name: Создать базу expom и коллекцию colltab
+#   community.mongodb.mongodb_shell:
+#     # login_host: 85.28.47.165
+#     # login_port: 27017
+#     eval: |
+#       db = db.getSiblingDB('expom');
+#       if (db.getCollectionNames().indexOf('colltab') === -1) {
+#         db.createCollection('colltab');
+#       }
+
+
+# - name: Создать базу expom и коллекцию colltab через mongo shell
+#   ansible.builtin.shell: >
+#     mongo --quiet --eval "
+#     db = db.getSiblingDB('expom');
+#     if (db.getCollectionNames().indexOf('colltab') === -1) {
+#       db.createCollection('colltab');
+#     }"
+
+    # - name: Создать базу данных и коллекцию в MongoDB
+    #   shell: >
+    #     mongo --eval "use {{ db_name }}; db.createCollection({{ collection_name }});"
+
+    - name: Создать базу expom и коллекцию colltab через mongosh
+      ansible.builtin.shell: >
+        mongosh --quiet --eval "
+        db = db.getSiblingDB('expom');
+        if (db.getCollectionNames().indexOf('colltab') === -1) {
+          db.createCollection('colltab');
+        }"

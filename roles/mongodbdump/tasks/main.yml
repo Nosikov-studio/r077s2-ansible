@@ -1,0 +1,19 @@
+
+---
+  
+    # - name: Импортировать данные в MongoDB с помощью mongoimport
+    #   shell: >
+    #     mongoimport --db {{ db_name }} --collection {{ collection_name }}
+    #     --file bdjsondump.txt --jsonArray --drop
+    
+
+  - name: Копировать файл дампа на удалённый хост
+    ansible.builtin.copy:
+      src: bdjsondump.txt
+      dest: /tmp/bdjsondump.txt
+      mode: '0644'
+
+  - name: Импортировать данные в MongoDB с помощью mongoimport
+    ansible.builtin.shell: >
+      mongoimport --db {{ db_name }} --collection {{ collection_name }}
+      --file /tmp/bdjsondump.txt --jsonArray --drop    

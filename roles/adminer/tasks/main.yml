@@ -1,0 +1,59 @@
+#---------------------------------------------------------      
+    - name: Create a directory if it does not exist
+      file:
+        path: /var/www/html/adminer
+        state: directory
+        mode: 0777
+#---------------------------------------------------------
+
+    - name: download  
+      get_url:
+        url: https://www.adminer.org/latest-mysql.php
+        dest: /var/www/html/adminer/adminer.php
+        mode: 0755
+
+
+    - name: Copy files adminer
+      copy:
+        src: /var/www/html/adminer/adminer.php
+        dest: /var/www/html/adminer/index.php
+        remote_src: yes
+#---------------------------------------------------------
+
+#---------------------------------------------------------      
+    - name: Change owner
+      file:
+        path: /var/www/html/adminer
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    - name: Change mode
+      file:
+        path: /var/www/html/adminer/index.php
+        mode: 0755
+
+#*******************************************************
+    - name: Copy nginx config file
+      copy:
+        src: files/default3.conf
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        group: root
+        mode: 0777
+  
+    - name: Copy config www.conf
+      copy:
+        src: files/www.conf
+        dest: /etc/php/8.1/fpm/pool.d/www.conf
+#*******************************************************
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted   
+
+    - name: Reload php8.1-fpm
+      service:
+        name: php8.1-fpm
+        state: restarted

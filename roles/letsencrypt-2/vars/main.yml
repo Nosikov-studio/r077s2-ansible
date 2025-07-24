@@ -1,0 +1,5 @@
+---
+# vars file for letsencrypt
+domain: "truruky.ru"
+email: "89134038088@mail.ru"
+webroot_path: "/var/www/ws"

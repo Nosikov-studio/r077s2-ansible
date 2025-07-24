@@ -1,0 +1,7 @@
+---
+# tasks file for test-role
+- name: Update apt cache
+  apt:
+    update_cache: yes
+- name: Ping my server
+  ping: 

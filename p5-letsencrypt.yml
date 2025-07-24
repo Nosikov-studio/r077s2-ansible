@@ -1,0 +1,8 @@
+---
+- name: Install my site
+  become: yes
+  hosts: s1
+
+  roles:
+    - letsencrypt-1 # "truruki.ru" сервер
+    - letsencrypt-2 # "truruky.ru" клиент

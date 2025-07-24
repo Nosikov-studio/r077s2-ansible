@@ -1,0 +1,56 @@
+---
+# tasks file for letsencrypt
+#--------------------------------------------------------- 11-1
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Установить certbot и плагин для nginx (или apache, если используете apache)
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx  # или python3-certbot-apache
+        state: present
+        update_cache: yes
+
+    - name: Получить сертификат для {{ domain }} через webroot
+      command: >
+        certbot certonly --webroot
+        --webroot-path {{ webroot_path }}
+        --domain {{ domain }}
+        --agree-tos
+        --email {{ email }}
+        --non-interactive
+      args:
+        creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+#---------------------------------------------------------11-2
+
+    - name: Update apt cache and install cron
+      apt:
+        name: cron
+        update_cache: yes
+
+    - name: Настроить автоматическое обновление сертификата
+      cron:
+        name: "Renew Let's Encrypt certificates"
+        job: "certbot renew --quiet --renew-hook 'systemctl reload nginx'"
+        minute: "0"
+        hour: "3"
+#---------------------------------------------------------11-3
+    - name: Insert/Update configuration using a local file
+      ansible.builtin.blockinfile:
+        path: /etc/nginx/sites-available/truruky
+        block: "{{ lookup('ansible.builtin.file', 'files/new_frag') }}"
+        marker: "## {mark} ANSIBLE MANAGED BLOCK"
+
+    - name: adding a line
+      lineinfile:
+        path: /etc/nginx/sites-available/truruky
+        insertafter: '^listen 80;'
+        line: 'return 301 https://truruky.ru$request_uri;'
+
+    - name: Reload nginx
+      service:
+        name: nginx
+        state: reloaded
+

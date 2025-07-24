@@ -1,0 +1,55 @@
+---
+#---------------------------------------------------------2
+    - name: Install pm2 globally
+      ansible.builtin.npm:
+        name: pm2
+        global: yes
+
+    # - name: Setup pm2 startup script for ubuntu user
+    #   command: sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u root
+    #   args:
+    #     creates: /etc/systemd/system/pm2-ubuntu.service
+
+    # - name: Start or restart app with pm2
+    #   become_user: root
+    #   shell: |
+    #     pm2 describe backend || pm2 start /var/www/trur/app.js --name backend
+    #     pm2 save
+
+    # - name: Ensure pm2 service is enabled and started
+    #   systemd:
+    #     name: pm2-ubuntu
+    #     enabled: yes
+    #     state: started
+
+
+#---------------------------------------------------------2
+    - name: Start Express server with pm2
+      ansible.builtin.shell: pm2 start index.js --name backend --watch --ignore-watch="node_modules uploads"
+      args:
+        chdir: /var/www/trur/
+# Если PM2 следит за изменениями в папке с загруженными файлами, 
+# он может перезапускать сервер при каждом сохранении файла
+# добавили ignore-watch для папки uploads
+
+    - name: Start Express server with nohup
+      ansible.builtin.shell: nohup node index.js > output.log 2>&1 &
+      args:
+        chdir: /var/www/trur/
+
+
+
+    - name: pm2 save
+      ansible.builtin.shell: pm2 save
+      args:
+        chdir: /var/www/trur/
+
+    - name: pm2 startup
+      ansible.builtin.shell: pm2 startup
+      args:
+        chdir: /var/www/trur/
+
+    - name: reboot
+      ansible.builtin.shell: pm2 startup
+      args:
+        chdir: /var/www/trur/

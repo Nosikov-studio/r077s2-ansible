@@ -1,0 +1,47 @@
+---
+# tasks file for phpinstall
+#------------------------------------------------s8
+   
+    -  name: Update apt cache
+       apt:
+        update_cache: yes
+
+    -  name: Установить зависимости для добавления PPA
+       apt:
+        name: software-properties-common
+        state: present
+
+    -  name: Добавить PPA для PHP 8.1
+       apt_repository:
+        repo: ppa:ondrej/php
+        state: present
+        update_cache: yes
+
+    -  name: Install PHP 8.1 and php-fpm packages
+       apt:
+        name:
+          - php8.1-fpm
+          - php8.1-mysql          
+        state: present
+        update_cache: yes
+
+    -  name: php version
+       shell: php -v
+       register: command_output
+
+    -  name: Display php version
+       debug:
+         var: command_output.stdout_lines
+#--------------------------------------------------        
+#---------------------------------------------------------
+    - name: Copy socket config php8.1-fpm-tru.sock
+      copy:
+        src: files/tru.conf
+        dest: /etc/php/8.1/fpm/pool.d/tru.conf
+
+    - name: Reload php8.1-fpm
+      service:
+        name: php8.1-fpm
+        state: restarted
+#---------------------------------------------------------
+#--------------------------------------------------  

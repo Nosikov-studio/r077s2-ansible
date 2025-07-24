@@ -1,0 +1,6 @@
+---
+# handlers file for mysqldump
+    - name: Restart mysql
+      service:
+        name: mysql
+        state: restarted

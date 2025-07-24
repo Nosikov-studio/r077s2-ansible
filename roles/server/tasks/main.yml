@@ -1,0 +1,93 @@
+---
+    -  name: Update apt cache
+       apt:
+        update_cache: yes
+
+
+
+    - name: Recursively remove directory
+      file:
+        path: /var/www/ws/
+        state: absent
+
+
+
+    - name: Create a directory if it does not exist
+      file:
+        path: /var/www/ws
+        state: directory
+        mode: 0777
+
+
+
+
+#---------------------------------------------------------2
+    - name: Installing git
+      package:
+        name: git
+        state: present
+        update_cache: yes
+
+
+    - name: Copy key
+      copy:
+        src: /home/neo/.ssh/id_ed25519
+        dest: /root/.ssh/id_ed25519
+        owner: root
+        group: root
+        mode: 0600
+
+
+    - name: Unconditionally reboot the machine with all defaults
+      ansible.builtin.reboot:
+ 
+
+
+    - name: Copy files from github
+      git:
+        repo: git@github.com:Nosikov-studio/r076s2-mediasoup.git
+        dest: /var/www/ws/
+        key_file: /root/www/.ssh/id_ed25519
+        accept_hostkey: yes
+        force: yes  
+       
+        recursive: yes
+        clone: yes
+        update: yes
+
+
+    - name: Recursively remove directory
+      file:
+        path: /var/www/ws/.git/
+        state: absent
+
+
+    - name: Install Node.js dependencies using npm
+      community.general.npm:
+        path: /var/www/ws/
+        state: present
+
+#---------------------------------------------------------2
+
+#---------------------------------------------------------
+
+    - name: Copy nginx config file for truruki
+      copy:
+        src: files/truruki
+        dest: /etc/nginx/sites-available/truruki
+        mode: 0777
+#-----------------------------------------------------------
+
+    - name: Link folder
+      file:
+        src: /etc/nginx/sites-available/truruki
+        dest: /etc/nginx/sites-enabled/truruki
+        state: link
+
+
+    - name: Reload nginx
+      service:
+        name: nginx
+        state: reloaded
+
+

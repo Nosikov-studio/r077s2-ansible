@@ -1,0 +1,22 @@
+---
+# tasks file for phpinstall
+#------------------------------------------------s8
+   
+    - name: Installing php fpm and php-mysql
+      apt:
+        name: "{{item}}"
+        state: latest
+        update_cache: yes
+      loop:
+        - php-fpm
+        - php-mysql
+      become: yes
+
+    -  name: php version
+       shell: php -v
+       register: command_output
+
+    -  name: Display php version
+       debug:
+         var: command_output.stdout_lines
+#--------------------------------------------------  

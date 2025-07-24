@@ -1,0 +1,96 @@
+---
+    -  name: Update apt cache
+       apt:
+        update_cache: yes
+
+
+
+    - name: Recursively remove directory
+      file:
+        path: /var/www/trur/
+        state: absent
+
+
+
+    - name: Create a directory if it does not exist
+      file:
+        path: /var/www/trur
+        state: directory
+        mode: 0777
+
+
+
+
+#---------------------------------------------------------2
+    - name: Installing git
+      package:
+        name: git
+        state: present
+        update_cache: yes
+
+
+    - name: Copy key
+      copy:
+        src: /home/neo/.ssh/id_ed25519
+        dest: /root/.ssh/id_ed25519
+        owner: root
+        group: root
+        mode: 0600
+
+
+    - name: Unconditionally reboot the machine with all defaults
+      ansible.builtin.reboot:
+ 
+
+
+    - name: Copy files from github
+      git:
+        repo: git@github.com:Nosikov-studio/r047h2-websocket.git
+        dest: /var/www/trur/
+        key_file: /root/www/.ssh/id_ed25519
+        accept_hostkey: yes
+        force: yes  
+       
+        recursive: yes
+        clone: yes
+        update: yes
+
+
+    - name: Recursively remove directory
+      file:
+        path: /var/www/trur/.git/
+        state: absent
+
+#    - name: Ensure npm is installed
+#      ansible.builtin.apt:
+#        name: npm
+#        state: present
+#      become: yes
+
+    - name: Install Node.js dependencies using npm
+      community.general.npm:
+        path: /var/www/trur/
+        state: present
+
+#---------------------------------------------------------2
+
+    - name: Copy nginx config file for truruki
+      copy:
+        src: files/truruki5
+        dest: /etc/nginx/sites-available/truruki
+        mode: 0777
+#-----------------------------------------------------------
+
+    - name: Link folder
+      file:
+        src: /etc/nginx/sites-available/truruki
+        dest: /etc/nginx/sites-enabled/truruki
+        state: link
+
+
+    - name: Reload nginx
+      service:
+        name: nginx
+        state: reloaded
+
+
