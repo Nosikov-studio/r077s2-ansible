@@ -61,9 +61,22 @@
         path: /var/www/ws/.git/
         state: absent
 
+    - name: Install python3
+      apt:
+        name: python3
+        state: present
+        update_cache: yes
+
     - name: Ensure python3-pip is installed
       apt:
         name: python3-pip
+        state: present
+    
+    - name: Install meson and ninja using pip
+      pip:
+        name:
+          - meson
+          - ninja
         state: present
 
 
