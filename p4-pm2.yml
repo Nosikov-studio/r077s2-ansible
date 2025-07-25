@@ -1,0 +1,7 @@
+---
+- name: Install my site
+  become: yes
+  hosts: s1
+
+  roles:
+    - pm2
