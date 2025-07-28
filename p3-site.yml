@@ -18,6 +18,6 @@
   #  - adminer2
   #  - pm2
   #  - pm2-
-    - client #camera.html
+  #  - client #camera.html
     # - phpmyadmin
     #- letsencrypt

@@ -5,4 +5,4 @@
 
   roles:
     - letsencrypt-1 # "truruki.ru" сервер
-    - letsencrypt-2 # "truruky.ru" клиент
+#    - letsencrypt-2 # "truruky.ru" клиент
