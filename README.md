@@ -18,7 +18,7 @@ python3 -m pip --version
 bash
 apt-get install python3-dev
 После установки pip повторно выполните npm install
-
+ Переходим в  папку проекта /var/www/ws/
 bash
 npm install
 3) p4-pm2.yml
